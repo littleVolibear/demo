@@ -1896,4 +1896,12 @@ bin/spark-shell \
  --driver-class-path /root/apps/hive/lib/mysql-connector-java-5.1.28.jar
 
 
+ Spark Streaming+Flume对接实验：
+ http://lxw1234.com/archives/2015/05/217.htm
+Spark日志分析项目Demo(4)--RDD使用，用户行为统计分析
+ http://blog.csdn.net/zhi_fu/article/details/77778675
+理解Spark的核心RDD
+ http://www.infoq.com/cn/articles/spark-core-rdd/
+
+
 
