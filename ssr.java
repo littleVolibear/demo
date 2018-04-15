@@ -8,7 +8,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ===================================================================================================================================
 
 ===================================================================================================================================
-第三步：一键加速VPS服务器
+一键加速VPS服务器
 yum -y install wget
 wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh
 chmod +x bbr.sh
