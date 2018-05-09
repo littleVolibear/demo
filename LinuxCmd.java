@@ -1861,17 +1861,17 @@ val list3 = list.flatMap(_.split(" ")).map((_,1)).groupBy(_._1).map(t=>(t._1,t._
 val list4 = list.flatMap(_.split(" ")).map((_,1)).groupBy(_._1).mapValues(_.foldLeft(0)(_+_._2)).toList.sortBy(_._2)	
 
 
-#groupByKey
-val rdd3 = rdd1 union rdd2
-rdd3.groupByKey
-rdd3.groupByKey.map(x=>(x._1,x._2.sum))
-rdd3.groupByKey.mapValues(_.sum)
+	#groupByKey
+	val rdd3 = rdd1 union rdd2
+	rdd3.groupByKey
+	rdd3.groupByKey.map(x=>(x._1,x._2.sum))
+	rdd3.groupByKey.mapValues(_.sum)
 
-#WordCount, 第二个效率低
-sc.textFile("/root/words.txt").flatMap(x=>x.split(" ")).map((_,1)).reduceByKey(_+_).sortBy(_._2,false).collect
-sc.textFile("/root/words.txt").flatMap(x=>x.split(" ")).map((_,1)).groupByKey.map(t=>(t._1, t._2.sum)).collect
+	#WordCount, 第二个效率低
+	sc.textFile("/root/words.txt").flatMap(x=>x.split(" ")).map((_,1)).reduceByKey(_+_).sortBy(_._2,false).collect
+	sc.textFile("/root/words.txt").flatMap(x=>x.split(" ")).map((_,1)).groupByKey.map(t=>(t._1, t._2.sum)).collect
 
-:r! echo
+	:r! echo
 
 
 apps/spark-1.6.1-bin-hadoop2.6/bin/spark-submit \
