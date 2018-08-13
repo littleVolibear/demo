@@ -1,0 +1,1 @@
+1、map------List(1,2,3) map {case i:Int=>i+1}

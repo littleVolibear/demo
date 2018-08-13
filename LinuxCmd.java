@@ -14,7 +14,7 @@
 	vi /etc/hosts(config file)
 		192.168.2.21 hdp-server01
 		192.168.2.22 hdp-server02
-		192.168.2.23 hdp-server03(ping hadp-server03)
+		192.168.2.23 hdp-server03(ping hdp-server03)
 	service iptables stop(关闭防火墙)
 	chkconfig iptables --list(检查防火墙启动状态)	
 	chkconfig iptables off(关闭防火墙启动)
@@ -29,7 +29,7 @@
 	mkdir ./app
 	tar -zxvf ....tar.gz -C ./app/
 	jdk目录：bin/java -version(jdk的bin路径)
-	(su)vi /etc/profile 末尾：export JAVA_HOME=//root/apps/jdk1.7.0_65
+	(su)vi /etc/profile 末尾：export JAVA_HOME=/root/apps/jdk1.7.0_65
 						  export PATH=$PATH:$JAVA_HOME/bin
 	#刷新配置
 	source /etc/profile
@@ -1628,6 +1628,19 @@ fedaration搭建
 			get 'user','1234','info1:name'	查询某个列族的某个列
 		删除某行
 			delete 'user','1234','info2:name'
+hbase 应用场景：
+	交易历史记录查询系统
+	百亿行数据表，千亿级二级索引表
+	每天千万行更新
+	查询场景简单，检索条件较少
+	关系型数据库所带来的问题
+	基于userId+time+id rowkey设计
+	成本考虑
+
+write hbase
+    rdd.saveAsNewAPIHadoopDataset(job.getConfiguration())  
+read hbase
+	val stuRDD = sc.newAPIHadoopRDD(conf, classOf[TableInputFormat]
 十、storm
 
 worker === jvm === 端口号 === slots === Num executors  3
@@ -1833,6 +1846,10 @@ flume+kafka
 	/usr/local/spark-1.5.2-bin-hadoop2.6/sbin/start-all.sh
 	ui界面
 	http://storm01:8080/
+
+	单独启动linux spark-shell窗口
+	spark-shell --driver-class-path /root/apps/hive/lib/mysql-connector-java-5.1.28.jar
+
 
 	提交程序：
 	spark-shell --master spark://storm01:7077 --total-executor-cores 4 --executor-memory 4g
