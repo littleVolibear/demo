@@ -1,242 +1,36 @@
-1 2G内存 vmnet8  i move 
-2 su pwd
-	// 修改hostname  
-	vi /etc/sysconfig/network(config file)
-		HOSTNAME = hdp-server01
-	setup
-		networkCofig-deviceConfig-eth0
-		name:eth0(modify)--device:ethp--userdhcp(去掉*)--static ip(192.168.2.21)-netMask(255.255.255.0)
-		--default gateway(192.168.2.1)--primary dns(192.168.2.1)--second dns(8.8.8.8)
-
-	// restart	
-	service network restart
-	// 修改主机和ip的映射关系
-	vi /etc/hosts(config file)
-		192.168.2.21 hdp-server01
-		192.168.2.22 hdp-server02
-		192.168.2.23 hdp-server03(ping hdp-server03)
-	service iptables stop(关闭防火墙)
-	chkconfig iptables --list(检查防火墙启动状态)	
-	chkconfig iptables off(关闭防火墙启动)
-	chkconfig iptables status(查看防火墙状态)
-	reboot (重启)
-3 安装jdk
-	root:
-	put path(\)--jdk  pwd(查看目录) exit
-
-	hadoop user:
-	// create dir
-	mkdir ./app
-	tar -zxvf ....tar.gz -C ./app/
-	jdk目录：bin/java -version(jdk的bin路径)
-	(su)vi /etc/profile 末尾：export JAVA_HOME=/root/apps/jdk1.7.0_65
-						  export PATH=$PATH:$JAVA_HOME/bin
-	#刷新配置
-	source /etc/profile
-	// check 
-	echo $JAVA_HOME 
-	java -version
-	tar -zxvf hadoopxxxtar.gz -C ./app/
-	rm -rf doc
-
-4、安装hadoop
-	4.1 vi hadoop-env.sh(config file)
-	export JAVA_HOME=/root/apps/jdk1.7.0_65
-
-	4.2 vi core-site.xml(config file)
-	<!-- 指定HADOOP所使用的文件系统schema（URI），HDFS的老大（NameNode）的地址 -->
-	<configuration>
-	<property>
-		<name>fs.defaultFS</name>
-		<value>hdfs://hdp-server01:9000</value>
-	</property>
-	<!-- 指定hadoop运行时产生文件的存储目录 -->
-	<property>
-		<name>hadoop.tmp.dir</name>
-		<value>/home/hadoop/hadoop-2.4.1/tmp</value>
-    </property>
-    </configuration>
-	4.3 hdfs-site.xml(config file)   
-		<!-- 指定HDFS副本的数量 -->
-		<configuration>
-		<property>
-			<name>dfs.replication</name>
-			<value>2</value>
-	    </property>
-	    <!-- 可选 namenode可以放置多个目录备份-->
-	    <property>
-	    <name>dfs.name.dir</name>
-	    <value>/home/hadoop/name1,/home/hadoop/name2</value>
-	    </property>
-
-	    </configuration>
-	    重命名：mv mapred-site.xml.template mapred-site.xml
-	4.4 mapred-site.xml (mv mapred-site.xml.template mapred-site.xml)(config file)
-		mv mapred-site.xml.template mapred-site.xml
-		vi mapred-site.xml
-		<!-- 指定mr运行在yarn上 -->
-		<configuration>
-		<property>
-			<name>mapreduce.framework.name</name>
-			<value>yarn</value>
-    	</property>
-    	</configuration>
-    4.5 yarn-site.xml(config file)
-		<!-- 指定YARN的老大（ResourceManager）的地址 -->
-		<configuration>
-		<property>
-			<name>yarn.resourcemanager.hostname</name>
-			<value>hdp-server01</value>
-   		</property>
-		<!-- reducer获取数据的方式 -->
-    		<property>
-			<name>yarn.nodemanager.aux-services</name>
-			<value>mapreduce_shuffle</value>
-     		</property>
-     		</configuration>
-    su halt
-    vm界面  configuration  ip mast
-
-5、 clone vm
-    	vi /etc/sysconfig/network
-		HOSTNAME = hdp-server02/3
-		修改ip:192.168.2.22/23 255.255.255.0 192.168.2.1 
-
-		scp -r hadoop-2.4.1/	hdp-server02://root/apps/
-
-
-		sbin目录下：
-		// 	启动namenode节点
-		./hadoop-daemon.sh start namenode 
-		./hadoop namenode -format (启动之前要格式化一下namenode)
-		./hadoop-daemon.sh start datanode
-
-
-		拷贝文件：scp hdfs-site.xml hdp-server02://root/apps/hadoop-2.4.1/etc/hadoop
-		端口：50070
-
-		批量重启文件：
-		./start-dfs.sh
-		kill -9 端口号
-
-		/etc/hadoop/slaves
-			hdp-server01
-			hdp-server02
-			hdp-server03
-
-6、登录：
-		ssh hdp-server02
-		ssh-keygen
-		ssh-copy-id hdp-server02
-		app hadoop/bin
-		./hadoop fs -put ~/jdkxxxxi586.tar.gz hdfs://hdp-server01:9000/
-		./hadoop fs - hdfs://hdp-server01:9000/jdkxxxxi586.tar.gz
-
-		sbin/
-		./start-yarn.sh
-
-		wordcount
-		hadoop jar hadoop-mapreducexxx.jar wordcount hdfs://hdp-server01:9000/big.txt 
-		hdfs://hdp-server01:9000/wcresult/
-
-		// 创建新文件
-		vi hello.txt
-		cat file1 > fil2   
-
-
-
-second day:
-		vm open terminal  init 3
-		vi /etc/inittab	startx开启图形界面
-			init 3 default
-		start-dfs.sh
-		sbin/
-		./start-yarn.sh
-		hdfs dfsadmin -report(bin dir下 ./commond)
-
-
-		https://search.maven.org/ jar包下载
-
-		删除根目录文件：
-		hadoop fs -rm -r hdfs://hdp-server01:9000/*
-
-
-
-
-
-
-=====================teacher-vm=========================
-vm-pc(网卡):
-ip:192.168.2.22
-mask:255.255.255.0
-gateway:192.168.2.1
-
-ifconfig：ip:192.168.2.129
-
-menu settting: 
-ip:192.168.2.0
-mask:255.255.255.0
-gateway:192.168.2.1
-
-
-
-network configuration
-ip:192.168.2.21
-mask:255.255.255.0
-gateway:192.168.2.1
-primary:192.168.2.1
-second:8.8.8.8
-
-hdpserver02:ip:192.168.2.22
-
-
-
-
-
-
-pc-ip:192.168.95.1
-ifconfig:192.168.95.3
-
-
-my-vm(setting):
-ip:192.168.95.0
-mask:255.255.255.0
-gateway:192.168.95.2
-
-
-
-network configuration
-ip:192.168.95.3
-mask:255.255.255.0
-gateway:192.168.95.2
-primary:192.168.95.2
-second:8.8.8.8
-
-
-192.168.95.3 hdp-server01
-192.168.95.4 hdp-server02
-192.168.95.5 hdp-server03
-192.168.95.6 hdp-server04 	
-192.168.95.7 hdp-server05 	
-192.168.95.8 hdp-server06 	
-192.168.95.9 hdp-server07 	
-192.168.95.10 hdp-server08 	
-
-
-
-ctrl+左右键:在单词之间跳转
-ctrl+a:跳到本行的行首
-ctrl+e:跳到页尾
-Ctrl+u：删除当前光标前面的文字 （还有剪切功能）
-ctrl+k：删除当前光标后面的文字(还有剪切功能)
-Ctrl+L：进行清屏操作
-Ctrl+y:粘贴Ctrl+u或ctrl+k剪切的内容
-Ctrl+w:删除光标前面的单词的字符
-Alt – d ：由光标位置开始，往右删除单词。往行尾删
-
-
 谷歌安装器--神器
 
+用hive建立一个数据仓库。用sparkSQL直接操作数据出结果到mysql。你们后台系统直接从mysql中取数据展示
+
+建立job定时跑。写个python脚本每天跟踪错误日志。有问题自动邮件告警
+
+我们之前做数据统计都是Spark做计算处理，布到定时框架里面，然后定时计算写入数据库
+================================================
+/etc/sysconfig/network
+/etc/sysconfig/network-scripts/ifcfg-eth0
+/etc/resolv.conf
+
+NETWORKING=yes
+HOSTNAME=est01
+GATEWAY=192.168.184.2
+
+BOOTPROTO=static
+NAME=eth0
+ONBOOT=yes
+IPADDR=192.168.184.81
+NETMASK=255.255.255.0
+GATEWAY=192.168.184.2
+DNS1=192.168.184.2
+
+nameserver 192.168.184.2
+
+service network restart
+==================================================
+
+sqoop 连接mysql:
+sqoop list-databases -connect jdbc:mysql://192.168.184.61:3306 -username root -password root
+sqoop 导入到 hive
+sqoop import --connect jdbc:mysql://10.51.72.36:3306/shop_member --username root --password xiaomai@@@A --table m_batch --hive-import
 
 转换app/hadoop-2.4.1的root权限为hadoop
 	chown hadoop:hadoop -R hadoop-2.4.1/
@@ -251,8 +45,6 @@ linux常用命令:
 		mkdir -p aaa/bbb/cc
 		rmdir -r aaa/bbb
 		rm -rf aaa(强制删)
-	2、修改文件夹名称
-		mv aaa angel 
 	3、创建/复制文件
 		touch filename
 		echo content > filename  (>重定向的作用)
@@ -260,17 +52,6 @@ linux常用命令:
 		vi filename
 
 		cp src desc 若名称有改变，是复制并重命名
-	4、移动光标
-		A------移动到行尾 
-		I--------行首 
-		gg-------调到文件首行
-	    G--------跳到文件末行
-		a--------光标后一位插入 o换行 
-		yy-------复制当前行 3yy复制3行
-		p--------粘贴
-		v y p-----部分选择复制(字符选择模式)
-		ctrl + v  y p -------块模式复制（块选择模式）
-		shift + v  y p 行选择模式复制(行选择模式)
 	5、替换内容
 		:%s/content1/content2
 	6、查找内容
@@ -296,6 +77,8 @@ linux常用命令:
 		chown angela:angela aaa/    <只有root能执行>   ---改变文件所有组
 		一个文件只读，是可以删除的，因为修改只是修改了父目录的东西
 		保护文件无法删除，可以让它的父文件夹只读不可写权限
+		hdfs dfs -chmod -R 777 
+		hdfs dfs -chmod -R 755 /
 
 	8、脚本写法
 		#!/bin/bash
@@ -332,20 +115,6 @@ linux常用命令:
 		[hadoop@shizhan ~]$ sudo useradd huangxiaoming
 
 	10、系统管理操作
-		*****查看主机名
-		hostname
-		****修改主机名(重启后无效)
-		hostname hadoop
-
-		*****修改主机名(重启后永久生效)
-		vi /ect/sysconfig/network
-		****修改IP(重启后无效)
-		ifconfig eth0 192.168.12.22
-
-		****修改IP(重启后永久生效)
-		vi /etc/sysconfig/network-scripts/ifcfg-eth0
-		
-
 
 		mount ****  挂载外部存储设备到文件系统中
 		mkdir   /mnt/cdrom      创建一个目录，用来挂载
@@ -372,6 +141,15 @@ linux常用命令:
 
 	直接修改  /etc/sysconfig/network-script/ifcfg-eth0
 	删掉UUID  HWADDR
+	DEVICE=eth0
+	TYPE=Ethernet
+	ONBOOT=yes
+	NM_CONTROLLED=yes
+	BOOTPROTO=static
+	IPADDR=192.168.184.61
+	NETMASK=255.255.255.0
+	GATEWAY=192.168.184.2
+
 	配置静态地址
 	然后：
 	rm -rf 　/etc/udev/rules.d/70-persistent-net.rules
@@ -697,7 +475,7 @@ dfs -cat /des/extra.dat;
 |1、将查询结果保存到一张新的hive表中
 |create table t_tmp
 |as
-|se|lect * from t_p;
+|select * from t_p;
 
 |2、将查询结果保存到一张已经存在的hive表中
 |insert into  table t_tmp
@@ -1022,7 +800,7 @@ bin/flume-ng agent -c conf -f conf/avro-logger.conf -n a1
 	案例3--mkdir
 		# fs.job
 		type=command
-		command=//root/apps/hadoop-2.6.4/bin/hadoop fs -mkdir /azaz
+		command=/root/apps/hadoop-2.6.4/bin/hadoop fs -mkdir /azaz
 	案例4--mr
 		# mrwc.job
 		type=command
@@ -1128,6 +906,9 @@ bin/flume-ng agent -c conf -f conf/avro-logger.conf -n a1
 		--export-dir /input
 =============================================================================
 九、hbase
+
+!tables
+!describe "ORDER_INFO"
 
 fedaration搭建
 ========================================================================
@@ -1919,6 +1700,9 @@ Spark日志分析项目Demo(4)--RDD使用，用户行为统计分析
  http://blog.csdn.net/zhi_fu/article/details/77778675
 理解Spark的核心RDD
  http://www.infoq.com/cn/articles/spark-core-rdd/
+
+
+
 
 
 
