@@ -25,7 +25,6 @@ shift + F6:批量修改变量名
 alt + j :增量选择下个相同单词
 ctrl + alt + 左方向键: 退回到上次编辑位置
 Ctrl+Shift+Space:自动补全代码
-Shift+Enter:插入空行
 ctrl+shift+M:选中对应括号
 Ctrl+Shift+Backspace:回到最后编辑位置
 Alt+Shift+Up/Down:上/下移一行
