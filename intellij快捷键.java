@@ -76,4 +76,4 @@ Alt+F1 查找代码所在位置
 Alt+1 快速打开或隐藏工程面板
 Ctrl+Alt+ left/right 返回至上次浏览的位置
 Alt+ left/right 切换代码视图
-Alt+ Up/Down 在方法间快速移动定位
+Alt+ Up/Down 在方法间快速移动定位111
