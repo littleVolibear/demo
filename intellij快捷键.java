@@ -35,6 +35,9 @@ ctrl+H:类继承机构
 ctrl+alt+H:类和方法被调用位置
 ctrl+shift+enter:帮你自动填充分号
 Ctrl+Alt+O:优化导入的类和包
+f11或者ctrl+f11:插入书签
+shift+f11:显示所有的书签
+
 
 
 Ctrl+Alt+I，将选中的代码进行自动缩进编排，这个功能在编辑 JSP 文件时也可以工作
